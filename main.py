@@ -1,11 +1,11 @@
-print("[!].This is the main.py file content `3` step.\n\n")
+print("[!].This is the main.py file content `4` step.\n\n")
 
 print("[1]. Importing the necessary libraries...")
 import os
 
 from app import CarDetectionConsumer
 from config import Config
-import torch
+from database import create_sqlalchemy_tables
 
 
 def main():
@@ -27,7 +27,10 @@ def main():
         print(f'SHOW_FRAME: {show_frame}')
         print('-'*25)
         
-        print("[3]. Creating a new instance of the CarDetectionProcessor class...\n\n")
+        print('[3].Creating the database tables if not exist...')
+        create_sqlalchemy_tables()
+        
+        print("[4]. Creating a new instance of the CarDetectionProcessor class...\n\n")
         # Create a new instance of the CarDetectionProcessor class.
         processor = CarDetectionConsumer(show_frame=show_frame)
         # Start processing messages.

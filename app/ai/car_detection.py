@@ -138,9 +138,11 @@ class CarDetection:
                     clsID = box.cls[0]
                     conf = box.conf[0]
                     bb = box.xyxy[0]
+                    
+                    conf = conf * 100
 
                     object_info = {
-                        'confidence': conf,
+                        'confidence': int(conf),
                         'coordinates': {
                             'x_min': int(bb[0]),
                             'y_min': int(bb[1]),

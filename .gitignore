@@ -10,8 +10,11 @@ commands.md
 # ignore the kafka producer.
 app/kafka/kafka_producer.py
 
-# ignore the videos directory.
+# ignore the this directory.
 videos/**
+storage/**
+instance/**
+packages/**
 
 # ...
 pytorch_new/**

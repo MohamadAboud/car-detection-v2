@@ -14,8 +14,9 @@ import threading
 
 
 # Local imports
+from database.sqlalchemy_db import DfOutputController, OutputModel
 from app.ai.car_detection import CarDetection
-from utils import json_deserializer
+from utils import json_deserializer, ProjectPaths
 from config import Config
 
 
@@ -80,6 +81,9 @@ class CarDetectionConsumer:
         self.message_queue = queue.Queue()
         # Initialize a thread pool for processing messages
         self.executor = ThreadPoolExecutor(max_workers=self.num_threads)
+        
+        # Create a instance of the DfOutputController
+        self.df_output_controller = DfOutputController()
         
         # Validate input parameters
         if not self.topic_name or not self.bootstrap_servers:
@@ -234,6 +238,42 @@ class CarDetectionConsumer:
             print("Error displaying frame:", e)
 
 
+    def __save_image(self, frame: np.ndarray , frame_id: Optional[int] = None) -> Optional[str]:
+        """
+        Saves a frame to disk.
+
+        Args:
+            frame_id (int | Optional): The id of the frame to be saved.
+            frame (numpy.ndarray): The frame to be saved.
+        
+        Returns:
+            Optional[str]: The path to the saved frame, or None if the frame could not be saved.
+        
+        Example:
+            Consider an instance of CarDetectionConsumer. Calling __save_image with an appropriate frame:
+
+            >>> frame = np.zeros((100, 100, 3), dtype=np.uint8)
+            >>> processor.__save_image(frame)
+        """
+        try:
+            if frame_id is None:
+                frame_id = np.random.randint(0, 100000)
+            # Genrate a random number
+            random_number = np.random.randint(0, 100000)
+            # Get the current timestamp
+            timestamp = time.strftime('%Y%m%d_%H%M%S')
+            # Create the image path
+            image_path = os.path.join(ProjectPaths.images_dir, f'{timestamp}_{random_number}_{frame_id}.jpg')
+            # Save the image
+            cv2.imwrite(image_path, frame)
+            # Return the image path
+            return image_path
+        except Exception as e:
+            print("Error saving image:", e)
+            exit(1)
+            return None
+
+
     def _process_batch(self, msg_values: List[Dict[str, Any]]) -> None:
         """
         Process a batch of messages containing frame data.
@@ -268,6 +308,7 @@ class CarDetectionConsumer:
         try:
             msg_values = [json.loads(msg) for msg in msg_values]
             print(f"Test[{type(msg_values[0])}]")
+            
             frames_base64 = [msg['frame'] for msg in msg_values]
             frames = self._decode_frames(frames_base64)
             
@@ -276,17 +317,26 @@ class CarDetectionConsumer:
                 
                 if processed_frame is not None and detected_objects is not None:
                     for i in range(len(msg_values)):
-                        message = msg_values[i]
+                        message         = msg_values[i]
+                        frame           = frames[i]
                         annotated_frame = processed_frame[i]
-                        objects = detected_objects[i]
+                        objects         = detected_objects[i]
                         
-                        data = {
-                            'id_source': message['id_source'],
-                            'detected_objects': objects,
-                            'timestamp': message['timestamp'],
-                        }
-
-                        print(data)
+                        source_id   = message['source_id']
+                        image_path  = self.__save_image(frame = annotated_frame)
+                        timestamp   = message['timestamp']
+                    
+                        # Create a output object
+                        self.df_output_controller.create(
+                            source_id       = source_id,
+                            use_case_id     = 3,
+                            
+                            output_data     = {'predictions': objects},
+                            img_path        = image_path,
+                            created_by      = 0,
+                        )
+                        
+                        print(f"Succesfully inserted output for source_id: {source_id} at {timestamp}")
 
                         if self.show_frame:
                             self._show_frame(annotated_frame)
