@@ -7,7 +7,7 @@ class Config:
     """
 
     # Kafka topic name for car detection messages
-    TOPIC_NAME: str = 'car_detection_topic'
+    TOPIC_NAME: str = 'car_detection'
 
     # Kafka bootstrap server configuration
     BOOTSTRAP_IP: str = '10.104.93.100'
