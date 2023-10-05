@@ -1,0 +1,1 @@
+from app.kafka.kafka_consumer import CarDetectionConsumer

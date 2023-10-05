@@ -1,0 +1,18 @@
+# ignore the python virtual environment
+venv/**
+
+# ignore the commands.
+commands.md
+
+# ignore the pycache
+**/__pycache__/**
+
+# ignore the kafka producer.
+app/kafka/kafka_producer.py
+
+# ignore the videos directory.
+videos/**
+
+# ...
+pytorch_new/**
+test.py

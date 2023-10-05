@@ -1,0 +1,1 @@
+from app.ai.car_detection import CarDetection
