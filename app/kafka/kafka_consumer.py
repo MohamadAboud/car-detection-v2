@@ -265,7 +265,7 @@ class CarDetectionConsumer:
         """
         print(f"Message received at {time.strftime('%Y-%m-%d %H:%M:%S')}")
         try:
-            frames_base64 = [msg['frame_data'] for msg in msg_values]
+            frames_base64 = [msg['frame'] for msg in msg_values]
             frames = self._decode_frames(frames_base64)
             
             if frames is not None and len(frames) > 0:
@@ -279,8 +279,8 @@ class CarDetectionConsumer:
                         
                         data = {
                             'id_source': message['id_source'],
-                            'frame_number': message['frame_number'],
                             'detected_objects': objects,
+                            'timestamp': message['timestamp'],
                         }
 
                         print(data)
