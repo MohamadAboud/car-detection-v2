@@ -14,7 +14,8 @@ import threading
 
 
 # Local imports
-from database.sqlalchemy_db import DfOutputController, OutputModel
+from database.sqlalchemy_db import DfOutputController
+
 from app.ai.car_detection import CarDetection
 from utils import json_deserializer, ProjectPaths
 from config import Config

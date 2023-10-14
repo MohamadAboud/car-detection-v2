@@ -135,19 +135,21 @@ class CarDetection:
                 objects = []
 
                 for box in r.boxes.cpu().numpy():
-                    clsID = box.cls[0]
+                    class_id = box.cls[0]
                     conf = box.conf[0]
-                    bb = box.xyxy[0]
+                    # Get the bounding box
+                    x, y, w, h = box.xywh[0]
                     
                     conf = conf * 100
 
                     object_info = {
-                        'confidence': int(conf),
+                        'confidence': conf,
+                        'boxes': box,
                         'coordinates': {
-                            'x_min': int(bb[0]),
-                            'y_min': int(bb[1]),
-                            'x_max': int(bb[2]),
-                            'y_max': int(bb[3]),
+                            'x': x,
+                            'y': y,
+                            'w': w,
+                            'h': h,
                         }
                     }
                     objects.append(object_info)

@@ -19,3 +19,7 @@ packages/**
 # ...
 pytorch_new/**
 test.py
+
+
+# ignore all files ending with .test.py
+**/*.test.**

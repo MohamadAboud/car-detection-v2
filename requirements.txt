@@ -1,6 +1,12 @@
 kafka_python==2.0.2
+
+# Utils
 numpy
 opencv_python==4.8.0.76
+
+# ML
 ultralytics==8.0.154
+
+# Database
 SQLAlchemy==2.0.21
 psycopg2-binary==2.9.8
